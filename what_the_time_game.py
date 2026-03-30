@@ -151,7 +151,7 @@ class ModeSelectScreen:
     def __init__(self, root):
         self.root = root
         self.root.title("🕐 מַה הַשָּׁעָה? 🕐")
-        self.root.geometry("900x700")
+        self.root.geometry("1100x850")
         self.root.configure(bg=BG)
         self.root.resizable(False, False)
         self._build()
@@ -235,7 +235,7 @@ class Mode1Game:
 
     def __init__(self, root, back_cb):
         self.root = root
-        self.root.geometry("900x980")
+        self.root.geometry("1100x1000")
         self.back_cb = back_cb
         self.current_hour = 0
         self.current_minute = 0
@@ -286,6 +286,7 @@ class Mode1Game:
                                    bg="white", fg="#1A1A1A", insertbackground="#1A1A1A")
         self.hour_entry.pack(pady=5)
         self.hour_entry.bind("<Return>", lambda e: self.check_answer())
+        self.hour_entry.bind("<KeyRelease>", self._on_hour_key)
 
         # Buttons
         bf = tk.Frame(self.frame, bg=BG); bf.pack(pady=8)
@@ -304,15 +305,24 @@ class Mode1Game:
                                  bg=BG, fg=BTN_GREEN, wraplength=700)
         self.feedback.pack(pady=15)
 
+    def _on_hour_key(self, event):
+        if event.keysym in ("BackSpace", "Delete", "Return", "Tab"):
+            return
+        val = self.hour_entry.get().strip()
+        if not val:
+            return
+        if len(val) >= 2 or (len(val) == 1 and val in '3456789'):
+            self.minute_entry.focus()
+
     def new_time(self):
         self.current_hour, self.current_minute = random.choice(ALL_TIMES)
         self.guesses_left = self.MAX_GUESSES
         draw_clock(self.canvas, self.current_hour, self.current_minute,
                    cx=175, cy=175, r=155)
-        self.hour_entry.delete(0, tk.END)
-        self.minute_entry.delete(0, tk.END)
         self.hour_entry.config(state="normal")
         self.minute_entry.config(state="normal")
+        self.hour_entry.delete(0, tk.END)
+        self.minute_entry.delete(0, tk.END)
         self.read_btn.config(state="disabled")
         self.feedback.config(text="", fg=BTN_GREEN)
         self._update_guesses_label()
@@ -374,7 +384,7 @@ class Mode1Game:
 
     def _back(self):
         self._outer.destroy()
-        self.root.geometry("900x700")
+        self.root.geometry("1100x850")
         self.back_cb()
 
 
@@ -387,7 +397,7 @@ class Mode2Game:
 
     def __init__(self, root, back_cb):
         self.root = root
-        self.root.geometry("900x980")
+        self.root.geometry("1100x1000")
         self.back_cb = back_cb
         self.current_hour = 0
         self.current_minute = 0
@@ -540,7 +550,7 @@ class Mode2Game:
 
     def _back(self):
         self._outer.destroy()
-        self.root.geometry("900x700")
+        self.root.geometry("1100x850")
         self.back_cb()
 
 
