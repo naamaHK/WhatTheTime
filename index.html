@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מַה הַשָּׁעָה? - What The Time</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;800&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-card" id="app-container">
+        <h1 class="main-title">🕐 מַה הַשָּׁעָה? 🕐</h1>
+        
+        <!-- Main Menu -->
+        <div id="view-menu" class="view active-view">
+            <h2 class="subtitle">בְּחַר מֵאֵיזֶה מִשְׂחָק תַּתְחִיל:</h2>
+            <div class="menu-buttons">
+                <button class="btn-large primary" onclick="startGame(1)">✏️  כְּתֹב אֶת הַשָּׁעָה</button>
+                <button class="btn-large secondary" onclick="startGame(2)">🔘  בְּחַר אֶת הַשָּׁעָה</button>
+            </div>
+        </div>
+
+        <!-- Game Interface -->
+        <div id="view-game" class="view">
+            <button class="btn-back" onclick="showMenu()">← חֲזֹר לַתַּפְרִיט</button>
+            
+            <div class="game-header">
+                <p id="game-instructions" class="instructions">הִסְתַּכְּלוּ עַל הַשָּׁעוֹן וּכְתְבוּ אֶת הַשָּׁעָה!</p>
+                <div id="lives-display" class="lives">נִסְיוֹנוֹת: ❤️❤️❤️</div>
+            </div>
+
+            <div class="clock-container">
+                <canvas id="clockCanvas" width="300" height="300"></canvas>
+            </div>
+
+            <!-- Mode 1 Inputs -->
+            <div id="mode1-inputs" class="input-section hidden">
+                <div class="input-group">
+                    <label>דַּקּוֹת</label>
+                    <input type="number" id="input-minutes" min="0" max="59" placeholder="00">
+                </div>
+                <div class="colon">:</div>
+                <div class="input-group">
+                    <label>שָׁעָה</label>
+                    <input type="number" id="input-hours" min="1" max="12" placeholder="12">
+                </div>
+            </div>
+
+            <!-- Mode 2 Choices -->
+            <div id="mode2-choices" class="choices-grid hidden">
+                <button class="choice-btn" onclick="makeGuess(0)" id="choice0"></button>
+                <button class="choice-btn" onclick="makeGuess(1)" id="choice1"></button>
+                <button class="choice-btn" onclick="makeGuess(2)" id="choice2"></button>
+                <button class="choice-btn" onclick="makeGuess(3)" id="choice3"></button>
+            </div>
+
+            <div class="action-buttons">
+                <button id="btn-check" class="btn-action check hidden" onclick="checkAnswerMode1()">✅ בְּדֹק!</button>
+                <button class="btn-action reset" onclick="newQuestion()">🔄 שָׁאֵלָה חֲדָשָׁה</button>
+                <button id="btn-read" class="btn-action read outline" onclick="readAloud()" disabled>🔊 הַקְרֵא</button>
+            </div>
+
+            <div id="feedback-msg" class="feedback"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
