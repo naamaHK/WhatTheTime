@@ -153,7 +153,8 @@ class ModeSelectScreen:
         self.root.title("🕐 מַה הַשָּׁעָה? 🕐")
         self.root.geometry("1100x850")
         self.root.configure(bg=BG)
-        self.root.resizable(False, False)
+        self.root.minsize(900, 700)
+        self.root.resizable(True, True)
         self._build()
 
     def _build(self):
