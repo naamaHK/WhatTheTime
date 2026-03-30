@@ -30,6 +30,36 @@ let guessesLeft = 3;
 let correctIdx = 0;
 const MAX_GUESSES = 3;
 
+// Web Audio Context for sounds
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function playTone(freq, type, duration, vol=0.1) {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+}
+
+function playSuccessSound() {
+    playTone(523.25, 'sine', 0.1); // C5
+    setTimeout(() => playTone(659.25, 'sine', 0.1), 100); // E5
+    setTimeout(() => playTone(783.99, 'sine', 0.2), 200); // G5
+}
+
+function playFailSound() {
+    playTone(300, 'triangle', 0.2);
+    setTimeout(() => playTone(250, 'triangle', 0.4), 150);
+}
+
 function timeToHebrew(hour, minute) {
     const h = HOURS_HEB[hour];
     const nextHour = HOURS_HEB[(hour % 12) + 1];
@@ -210,12 +240,14 @@ function checkAnswerMode1() {
     if (h === currentHour && m === currentMinute) {
         guessesLeft = 0;
         updateLives();
+        playSuccessSound();
         fb.textContent = PRAISES[Math.floor(Math.random() * PRAISES.length)];
         fb.className = "feedback success";
         inpH.disabled = true; inpM.disabled = true;
         document.getElementById("btn-read").disabled = false;
     } else {
         guessesLeft--;
+        playFailSound();
         updateLives();
         shakeApp();
         if (guessesLeft === 0) {
@@ -269,6 +301,7 @@ function makeGuess(idx) {
     if (idx === correctIdx) {
         guessesLeft = 0;
         updateLives();
+        playSuccessSound();
         btn.classList.add("correct");
         fb.textContent = PRAISES[Math.floor(Math.random() * PRAISES.length)];
         fb.className = "feedback success";
@@ -279,6 +312,7 @@ function makeGuess(idx) {
         }
     } else {
         guessesLeft--;
+        playFailSound();
         updateLives();
         shakeApp();
         btn.classList.add("wrong");
