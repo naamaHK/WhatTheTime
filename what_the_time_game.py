@@ -272,14 +272,6 @@ class Mode1Game:
         # Inputs
         inp = tk.Frame(self.frame, bg=BG); inp.pack(pady=15)
 
-        mf = tk.Frame(inp, bg=BG); mf.pack(side="left", padx=25)
-        tk.Label(mf, text="דַּקּוֹת", font=FONT_HEB, bg=BG, fg=BTN_BLUE).pack()
-        self.minute_entry = tk.Entry(mf, font=("Arial", 22, "bold"), width=4,
-                                     justify="center", bd=3, relief="groove",
-                                     bg="white", fg="#1A1A1A", insertbackground="#1A1A1A")
-        self.minute_entry.pack(pady=5)
-        self.minute_entry.bind("<Return>", lambda e: self.check_answer())
-
         hf = tk.Frame(inp, bg=BG); hf.pack(side="left", padx=25)
         tk.Label(hf, text="שָׁעָה", font=FONT_HEB, bg=BG, fg=BTN_BLUE).pack()
         self.hour_entry = tk.Entry(hf, font=("Arial", 22, "bold"), width=4,
@@ -288,6 +280,14 @@ class Mode1Game:
         self.hour_entry.pack(pady=5)
         self.hour_entry.bind("<Return>", lambda e: self.check_answer())
         self.hour_entry.bind("<KeyRelease>", self._on_hour_key)
+
+        mf = tk.Frame(inp, bg=BG); mf.pack(side="left", padx=25)
+        tk.Label(mf, text="דַּקּוֹת", font=FONT_HEB, bg=BG, fg=BTN_BLUE).pack()
+        self.minute_entry = tk.Entry(mf, font=("Arial", 22, "bold"), width=4,
+                                     justify="center", bd=3, relief="groove",
+                                     bg="white", fg="#1A1A1A", insertbackground="#1A1A1A")
+        self.minute_entry.pack(pady=5)
+        self.minute_entry.bind("<Return>", lambda e: self.check_answer())
 
         # Buttons
         bf = tk.Frame(self.frame, bg=BG); bf.pack(pady=8)
@@ -459,6 +459,10 @@ class Mode2Game:
                                   relief="raised", bd=3, cursor="hand2",
                                   state="disabled", command=self.read_aloud)
         self.read_btn.pack(side="left", padx=8)
+        self.read_opts_btn = tk.Button(bottom_bf, text="🔊 הַקְרֵא אֶפְשָׁרוּיוֹת", font=FONT_HEB,
+                                  bg="#F9E79F", fg=DARK, padx=18, pady=10,
+                                  relief="raised", bd=3, cursor="hand2",
+                                  command=self.read_all_options)
 
         self.feedback = tk.Label(self.frame, text="", font=("Arial", 18, "bold"),
                                  bg=BG, fg=BTN_GREEN, wraplength=650)
@@ -469,6 +473,10 @@ class Mode2Game:
         self.guesses_left = self.MAX_GUESSES
         self.feedback.config(text="")
         self.read_btn.config(state="disabled", bg="#D7BDE2")
+        self.read_opts_btn.pack_forget()
+        if hasattr(self, '_timer_id'):
+            self.root.after_cancel(self._timer_id)
+        self._timer_id = self.root.after(60000, lambda: self.read_opts_btn.pack(side="left", padx=8))
         draw_clock(self.canvas, self.current_hour, self.current_minute,
                    cx=175, cy=175, r=155)
         self._set_choices()
@@ -486,7 +494,7 @@ class Mode2Game:
         self.options = options
 
         for i, (h, m) in enumerate(options):
-            self.choice_btns[i].config(text=time_to_hebrew(h, m),
+            self.choice_btns[i].config(text=f"{i+1}. {time_to_hebrew(h, m)}",
                                        bg="white", fg=DARK, state="normal")
 
     def _reset_buttons(self):

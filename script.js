@@ -200,6 +200,16 @@ function newQuestion() {
     
     drawClock(currentHour, currentMinute);
     
+    clearTimeout(window.readOptsTimer);
+    document.getElementById("btn-read-opts").classList.add("hidden");
+    if (currentMode === 2) {
+        window.readOptsTimer = setTimeout(() => {
+            if (guessesLeft > 0) {
+                document.getElementById("btn-read-opts").classList.remove("hidden");
+            }
+        }, 60000);
+    }
+    
     if (currentMode === 1) {
         const inpM = document.getElementById("input-minutes");
         const inpH = document.getElementById("input-hours");
@@ -284,7 +294,7 @@ function setupMode2() {
     
     for (let i = 0; i < 4; i++) {
         const btn = document.getElementById(`choice${i}`);
-        btn.textContent = timeToHebrew(options[i].h, options[i].m);
+        btn.textContent = `${i + 1}. ${timeToHebrew(options[i].h, options[i].m)}`;
         btn.disabled = false;
         btn.className = "choice-btn";
         if (options[i].h === currentHour && options[i].m === currentMinute) {
@@ -344,6 +354,20 @@ function readAloud() {
     const hebrewVoice = voices.find(v => v.lang.includes('he')) || voices.find(v => v.name.includes('Carmit'));
     if (hebrewVoice) msg.voice = hebrewVoice;
     
+    window.speechSynthesis.speak(msg);
+}
+
+function readAllOptions() {
+    let parts = [];
+    for(let i=0; i<4; i++) {
+        parts.push(`אפשרות ${i+1}: ${document.getElementById('choice'+i).textContent.replace(/^\\d+\\.\\s*/, '')}`);
+    }
+    const text = parts.join(". ");
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'he-IL';
+    const voices = window.speechSynthesis.getVoices();
+    const hebrewVoice = voices.find(v => v.lang.includes('he')) || voices.find(v => v.name.includes('Carmit'));
+    if (hebrewVoice) msg.voice = hebrewVoice;
     window.speechSynthesis.speak(msg);
 }
 
