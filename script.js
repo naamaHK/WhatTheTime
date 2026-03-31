@@ -301,7 +301,7 @@ function setupMode2() {
         if (currentMode === 4) {
              const hh = String(options[i].h).padStart(2, '0');
              const mm = String(options[i].m).padStart(2, '0');
-             btn.textContent = `${hNumText[i]}. ${hh}:${mm}`;
+             btn.textContent = `${hh}:${mm}`;
         } else {
              btn.textContent = `${hNumText[i]}. ${timeToHebrew(options[i].h, options[i].m)}`;
         }

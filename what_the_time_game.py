@@ -507,7 +507,7 @@ class Mode2Game:
         for i, (h, m) in enumerate(options):
             num_words = ["אחת", "שתים", "שלוש", "ארבע"]
             if getattr(self, "is_digital", False):
-                self.choice_btns[i].config(text=f"{num_words[i]}. {h:02d}:{m:02d}",
+                self.choice_btns[i].config(text=f"{h:02d}:{m:02d}",
                                            bg="white", fg=DARK, state="normal")
             else:
                 self.choice_btns[i].config(text=f"{num_words[i]}. {time_to_hebrew(h, m)}",
