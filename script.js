@@ -29,6 +29,8 @@ let currentMinute = 0;
 let guessesLeft = 3;
 let correctIdx = 0;
 const MAX_GUESSES = 3;
+let timeOptsLeft = 60;
+let uiTimerId = null;
 
 // Web Audio Context for sounds
 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -200,14 +202,13 @@ function newQuestion() {
     
     drawClock(currentHour, currentMinute);
     
-    clearTimeout(window.readOptsTimer);
+    clearTimeout(uiTimerId);
+    document.getElementById("read-timer").classList.add("hidden");
     document.getElementById("btn-read-opts").classList.add("hidden");
     if (currentMode === 2) {
-        window.readOptsTimer = setTimeout(() => {
-            if (guessesLeft > 0) {
-                document.getElementById("btn-read-opts").classList.remove("hidden");
-            }
-        }, 60000);
+        timeOptsLeft = 60;
+        document.getElementById("read-timer").classList.remove("hidden");
+        updateTimer();
     }
     
     if (currentMode === 1) {
@@ -359,8 +360,10 @@ function readAloud() {
 
 function readAllOptions() {
     let parts = [];
+    const words = ["אַחַת", "שְׁתַּיִם", "שָׁלוֹשׁ", "אַרְבַּע"];
     for(let i=0; i<4; i++) {
-        parts.push(`אפשרות ${i+1}: ${document.getElementById('choice'+i).textContent.replace(/^\\d+\\.\\s*/, '')}`);
+        const cleanText = document.getElementById('choice'+i).textContent.replace(/^\\d+\\.\\s*/, '');
+        parts.push(`${words[i]} - ${cleanText}`);
     }
     const text = parts.join(". ");
     const msg = new SpeechSynthesisUtterance(text);
@@ -369,6 +372,19 @@ function readAllOptions() {
     const hebrewVoice = voices.find(v => v.lang.includes('he')) || voices.find(v => v.name.includes('Carmit'));
     if (hebrewVoice) msg.voice = hebrewVoice;
     window.speechSynthesis.speak(msg);
+}
+
+function updateTimer() {
+    if (timeOptsLeft > 0) {
+        document.getElementById("read-timer").textContent = `⏳ ${timeOptsLeft}`;
+        timeOptsLeft--;
+        uiTimerId = setTimeout(updateTimer, 1000);
+    } else {
+        document.getElementById("read-timer").classList.add("hidden");
+        if (guessesLeft > 0 && currentMode === 2) {
+            document.getElementById("btn-read-opts").classList.remove("hidden");
+        }
+    }
 }
 
 // Initialize voices cleanly for Chrome

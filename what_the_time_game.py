@@ -454,6 +454,8 @@ class Mode2Game:
                   bg="#AED6F1", fg=DARK, padx=25, pady=10,
                   relief="raised", bd=3, cursor="hand2",
                   command=self.new_question).pack(side="left", padx=8)
+        self.timer_label = tk.Label(bottom_bf, text="", font=FONT_HEB, bg=BG, fg=BTN_RED)
+        self.timer_label.pack(side="left", padx=8)
         self.read_btn = tk.Button(bottom_bf, text="🔊 הַקְרֵא", font=FONT_HEB,
                                   bg="#D7BDE2", fg=DARK, padx=18, pady=10,
                                   relief="raised", bd=3, cursor="hand2",
@@ -476,7 +478,8 @@ class Mode2Game:
         self.read_opts_btn.pack_forget()
         if hasattr(self, '_timer_id'):
             self.root.after_cancel(self._timer_id)
-        self._timer_id = self.root.after(60000, lambda: self.read_opts_btn.pack(side="left", padx=8))
+        self.time_left = 60
+        self._update_timer()
         draw_clock(self.canvas, self.current_hour, self.current_minute,
                    cx=175, cy=175, r=155)
         self._set_choices()
@@ -552,12 +555,24 @@ class Mode2Game:
         except Exception:
             pass
 
+    def _update_timer(self):
+        if not hasattr(self, 'time_left'): return
+        if self.time_left > 0:
+            self.timer_label.config(text=f"⏳ {self.time_left}")
+            self.time_left -= 1
+            self._timer_id = self.root.after(1000, self._update_timer)
+        else:
+            self.timer_label.config(text="")
+            self.read_opts_btn.pack(side="left", padx=8)
+
     def read_all_options(self):
         """Speak all options currently visible to the user."""
         try:
             opts_text = [btn.cget("text") for btn in self.choice_btns]
             clean_opts = [text.split(". ", 1)[-1] for text in opts_text]
-            full_text = " . ".join(clean_opts)
+            words = ["אַחַת", "שְׁתַּיִם", "שָׁלוֹשׁ", "אַרְבַּע"]
+            spoken_opts = [f"{words[i]} - {clean_opts[i]}" for i in range(4)]
+            full_text = " . ".join(spoken_opts)
             subprocess.Popen(["say", "-v", "Carmit", full_text])
         except Exception:
             pass
