@@ -570,7 +570,7 @@ class Mode2Game:
         try:
             opts_text = [btn.cget("text") for btn in self.choice_btns]
             clean_opts = [text.split(". ", 1)[-1] for text in opts_text]
-            words = ["אַחַת", "שְׁתַּיִם", "שָׁלוֹשׁ", "אַרְבַּע"]
+            words = ["אֶפְשָׁרוּת אַחַת", "אֶפְשָׁרוּת שְׁנִיָּה", "אֶפְשָׁרוּת שְׁלִישִׁית", "אֶפְשָׁרוּת רְבִיעִית"]
             spoken_opts = [f"{words[i]} - {clean_opts[i]}" for i in range(4)]
             full_text = " . ".join(spoken_opts)
             subprocess.Popen(["say", "-v", "Carmit", full_text])

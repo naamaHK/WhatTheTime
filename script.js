@@ -360,7 +360,7 @@ function readAloud() {
 
 function readAllOptions() {
     let parts = [];
-    const words = ["אַחַת", "שְׁתַּיִם", "שָׁלוֹשׁ", "אַרְבַּע"];
+    const words = ["אֶפְשָׁרוּת אַחַת", "אֶפְשָׁרוּת שְׁנִיָּה", "אֶפְשָׁרוּת שְׁלִישִׁית", "אֶפְשָׁרוּת רְבִיעִית"];
     for(let i=0; i<4; i++) {
         const cleanText = document.getElementById('choice'+i).textContent.replace(/^\\d+\\.\\s*/, '');
         parts.push(`${words[i]} - ${cleanText}`);
