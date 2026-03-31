@@ -363,7 +363,7 @@ function readAllOptions() {
     const words = ["אֶפְשָׁרוּת אַחַת", "אֶפְשָׁרוּת שְׁנִיָּה", "אֶפְשָׁרוּת שְׁלִישִׁית", "אֶפְשָׁרוּת רְבִיעִית"];
     for(let i=0; i<4; i++) {
         const cleanText = document.getElementById('choice'+i).textContent.replace(/^\\d+\\.\\s*/, '');
-        parts.push(`${words[i]} - ${cleanText}`);
+        parts.push(`${words[i]}, ${cleanText}`);
     }
     const text = parts.join(". ");
     const msg = new SpeechSynthesisUtterance(text);
