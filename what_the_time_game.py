@@ -552,6 +552,16 @@ class Mode2Game:
         except Exception:
             pass
 
+    def read_all_options(self):
+        """Speak all options currently visible to the user."""
+        try:
+            opts_text = [btn.cget("text") for btn in self.choice_btns]
+            clean_opts = [text.split(". ", 1)[-1] for text in opts_text]
+            full_text = " . ".join(clean_opts)
+            subprocess.Popen(["say", "-v", "Carmit", full_text])
+        except Exception:
+            pass
+
     def _shake(self):
         x = self.root.winfo_x(); y = self.root.winfo_y()
         for dx in [8, -8, 6, -6, 4, -4, 0]:
