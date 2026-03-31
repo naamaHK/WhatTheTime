@@ -168,9 +168,11 @@ function startGame(mode) {
     
     document.getElementById("mode1-inputs").classList.toggle("hidden", mode !== 1);
     document.getElementById("btn-check").classList.toggle("hidden", mode !== 1);
-    document.getElementById("mode2-choices").classList.toggle("hidden", mode !== 2);
+    document.getElementById("mode2-choices").classList.toggle("hidden", mode !== 2 && mode !== 4);
     
-    const instr = mode === 1 ? "הִסְתַּכְּלוּ עַל הַשָּׁעוֹן וּכְתְבוּ אֶת הַשָּׁעָה!" : "בְּחַר אֶת הַשָּׁעָה הַנְּכוֹנָה:";
+    let instr = "הִסְתַּכְּלוּ עַל הַשָּׁעוֹן וּכְתְבוּ אֶת הַשָּׁעָה!";
+    if (mode === 2) instr = "בְּחַר אֶת הַשָּׁעָה הַנְּכוֹנָה (בְּמִלִּים):";
+    if (mode === 4) instr = "בְּחַר אֶת הַשָּׁעָה הַנְּכוֹנָה (דִּיגִיטָלִי):";
     document.getElementById("game-instructions").textContent = instr;
     
     newQuestion();
@@ -205,7 +207,7 @@ function newQuestion() {
     clearTimeout(uiTimerId);
     document.getElementById("read-timer").classList.add("hidden");
     document.getElementById("btn-read-opts").classList.add("hidden");
-    if (currentMode === 2) {
+    if (currentMode === 2 || currentMode === 4) {
         timeOptsLeft = 60;
         document.getElementById("read-timer").classList.remove("hidden");
         updateTimer();
@@ -295,7 +297,14 @@ function setupMode2() {
     
     for (let i = 0; i < 4; i++) {
         const btn = document.getElementById(`choice${i}`);
-        btn.textContent = `${i + 1}. ${timeToHebrew(options[i].h, options[i].m)}`;
+        const hNumText = ["אחת", "שתים", "שלוש", "ארבע"];
+        if (currentMode === 4) {
+             const hh = String(options[i].h).padStart(2, '0');
+             const mm = String(options[i].m).padStart(2, '0');
+             btn.textContent = `${hNumText[i]}. ${hh}:${mm}`;
+        } else {
+             btn.textContent = `${hNumText[i]}. ${timeToHebrew(options[i].h, options[i].m)}`;
+        }
         btn.disabled = false;
         btn.className = "choice-btn";
         if (options[i].h === currentHour && options[i].m === currentMinute) {
@@ -382,7 +391,7 @@ function updateTimer() {
         uiTimerId = setTimeout(updateTimer, 1000);
     } else {
         document.getElementById("read-timer").classList.add("hidden");
-        if (guessesLeft > 0 && currentMode === 2) {
+        if (guessesLeft > 0 && (currentMode === 2 || currentMode === 4)) {
             document.getElementById("btn-read-opts").classList.remove("hidden");
         }
     }

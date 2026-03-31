@@ -174,8 +174,11 @@ class ModeSelectScreen:
         tk.Button(self.frame, text="✏️  כְּתֹב אֶת הַשָּׁעָה",
                   bg="#AED6F1", command=self._start_mode1, **btn_cfg).pack(pady=10)
 
-        tk.Button(self.frame, text="🔘  בְּחַר אֶת הַשָּׁעָה",
+        tk.Button(self.frame, text="🔘  בְּחַר (בְּמִלִּים)",
                   bg="#A9DFBF", command=self._start_mode2, **btn_cfg).pack(pady=10)
+
+        tk.Button(self.frame, text="🔢  בְּחַר (דִּיגִיטָלִי)",
+                  bg="#85C1E9", fg="#1B4F72", command=self._start_mode4, **btn_cfg).pack(pady=10)
 
     def _clear(self):
         self.frame.destroy()
@@ -186,7 +189,11 @@ class ModeSelectScreen:
 
     def _start_mode2(self):
         self._clear()
-        Mode2Game(self.root, back_cb=self._rebuild)
+        Mode2Game(self.root, back_cb=self._rebuild, is_digital=False)
+
+    def _start_mode4(self):
+        self._clear()
+        Mode2Game(self.root, back_cb=self._rebuild, is_digital=True)
 
     def _rebuild(self):
         self._build()
@@ -396,8 +403,9 @@ class Mode1Game:
 class Mode2Game:
     MAX_GUESSES = 3
 
-    def __init__(self, root, back_cb):
+    def __init__(self, root, back_cb, is_digital=False):
         self.root = root
+        self.is_digital = is_digital
         self.root.geometry("1100x1000")
         self.back_cb = back_cb
         self.current_hour = 0
@@ -497,8 +505,13 @@ class Mode2Game:
         self.options = options
 
         for i, (h, m) in enumerate(options):
-            self.choice_btns[i].config(text=f"{i+1}. {time_to_hebrew(h, m)}",
-                                       bg="white", fg=DARK, state="normal")
+            num_words = ["אחת", "שתים", "שלוש", "ארבע"]
+            if getattr(self, "is_digital", False):
+                self.choice_btns[i].config(text=f"{num_words[i]}. {h:02d}:{m:02d}",
+                                           bg="white", fg=DARK, state="normal")
+            else:
+                self.choice_btns[i].config(text=f"{num_words[i]}. {time_to_hebrew(h, m)}",
+                                           bg="white", fg=DARK, state="normal")
 
     def _reset_buttons(self):
         for btn in self.choice_btns:
