@@ -444,7 +444,7 @@ class Mode2Game:
                             bg="white", fg=DARK, width=26, pady=12,
                             relief="raised", bd=3, cursor="hand2",
                             command=lambda idx=i: self._guess(idx))
-            btn.grid(row=i // 2, column=i % 2, padx=10, pady=6)
+            btn.grid(row=i // 2, column=1 - (i % 2), padx=10, pady=6)
             self.choice_btns.append(btn)
 
         # New question + read-aloud buttons
