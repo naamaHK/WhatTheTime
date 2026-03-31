@@ -362,7 +362,8 @@ function readAllOptions() {
     let parts = [];
     const words = ["אֶפְשָׁרוּת אַחַת", "אֶפְשָׁרוּת שְׁנִיָּה", "אֶפְשָׁרוּת שְׁלִישִׁית", "אֶפְשָׁרוּת רְבִיעִית"];
     for(let i=0; i<4; i++) {
-        const cleanText = document.getElementById('choice'+i).textContent.replace(/^\\d+\\.\\s*/, '');
+        const fullText = document.getElementById('choice'+i).textContent;
+        const cleanText = fullText.split('. ').slice(1).join('. ') || fullText;
         parts.push(`${words[i]}, ${cleanText}`);
     }
     const text = parts.join(". ");
